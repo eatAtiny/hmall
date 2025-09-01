@@ -2,9 +2,13 @@ server:
   port: 8082
 spring:
   application:
-    name: item-service
+    name: cart-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.226.131:8848
   profiles:
-    active: dev
+    active: local
   datasource:
     url: jdbc:mysql://${hm.db.host}:3306/hm-cart?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -19,7 +23,7 @@ mybatis-plus:
       id-type: auto
 logging:
   level:
-    com.hmall: debug
+    cart.service: debug
   pattern:
     dateformat: HH:mm:ss:SSS
   file:
@@ -39,3 +43,6 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - cart.service.controller
+feign:
+  okhttp:
+    enabled: true # 开启OKHttp功能
