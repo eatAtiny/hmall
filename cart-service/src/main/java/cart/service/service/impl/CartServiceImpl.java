@@ -1,5 +1,6 @@
 package cart.service.service.impl;
 
+import cart.service.config.CartProperties;
 import cart.service.domain.dto.CartFormDTO;
 import cart.service.domain.po.Cart;
 import cart.service.domain.vo.CartVO;
@@ -40,6 +41,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     // private final IItemService itemService;
 
+    private final CartProperties cartProperties;
     private final ItemClient itemClient;
 
     @Override
@@ -115,8 +117,8 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     private void checkCartsFull(Long userId) {
         int count = lambdaQuery().eq(Cart::getUserId, userId).count();
-        if (count >= 10) {
-            throw new BizIllegalException(StrUtil.format("用户购物车课程不能超过{}", 10));
+        if (count >= cartProperties.getMaxAmount()) {
+            throw new BizIllegalException(StrUtil.format("用户购物车课程不能超过{}", cartProperties.getMaxAmount()));
         }
     }
 
