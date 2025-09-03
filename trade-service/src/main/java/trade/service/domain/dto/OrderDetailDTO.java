@@ -1,4 +1,4 @@
-package pay.service.domain.dto;
+package trade.service.domain.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

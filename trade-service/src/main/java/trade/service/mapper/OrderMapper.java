@@ -1,8 +1,9 @@
-package pay.service.mapper;
+package trade.service.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import pay.service.domain.po.OrderLogistics;
+import trade.service.domain.po.Order;
+
 
 /**
  * <p>
@@ -13,6 +14,6 @@ import pay.service.domain.po.OrderLogistics;
  * @since 2023-05-05
  */
 @Mapper
-public interface OrderLogisticsMapper extends BaseMapper<OrderLogistics> {
+public interface OrderMapper extends BaseMapper<Order> {
 
 }

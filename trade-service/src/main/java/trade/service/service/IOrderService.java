@@ -1,8 +1,8 @@
-package pay.service.service;
+package trade.service.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.heima.api.dto.OrderFormDTO;
-import pay.service.domain.po.Order;
+import trade.service.domain.po.Order;
 
 
 /**

@@ -1,19 +1,18 @@
-package pay.service.mapper;
+package trade.service.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import pay.service.domain.po.Order;
-
+import trade.service.domain.po.OrderDetail;
 
 /**
  * <p>
- *  Mapper 接口
+ * 订单详情表 Mapper 接口
  * </p>
  *
  * @author 虎哥
  * @since 2023-05-05
  */
 @Mapper
-public interface OrderMapper extends BaseMapper<Order> {
+public interface OrderDetailMapper extends BaseMapper<OrderDetail> {
 
 }

@@ -1,10 +1,11 @@
-package pay.service.service.impl;
+package trade.service.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hmall.common.exception.BadRequestException;
-import pay.service.domain.po.Order;
-import pay.service.domain.po.OrderDetail;
-import pay.service.mapper.OrderMapper;
+import com.hmall.common.utils.UserContext;
+import trade.service.domain.po.Order;
+import trade.service.domain.po.OrderDetail;
+import trade.service.mapper.OrderMapper;
 
 import com.heima.api.client.ItemClient;
 import com.heima.api.client.CartClient;
@@ -13,8 +14,8 @@ import com.heima.api.dto.OrderDetailDTO;
 import com.heima.api.dto.OrderFormDTO;
 
 
-import pay.service.service.IOrderDetailService;
-import pay.service.service.IOrderService;
+import trade.service.service.IOrderDetailService;
+import trade.service.service.IOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +67,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setTotalFee(total);
         // 1.5.其它属性
         order.setPaymentType(orderFormDTO.getPaymentType());
-        order.setUserId(/* TODO UserContext.getUser()*/1L);
+        order.setUserId(UserContext.getUser());
         order.setStatus(1);
         // 1.6.将Order写入数据库order表中
         save(order);

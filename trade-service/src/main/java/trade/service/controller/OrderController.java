@@ -2,8 +2,8 @@ package trade.service.controller;
 
 import com.hmall.common.utils.BeanUtils;
 import com.heima.api.dto.OrderFormDTO;
-import pay.service.domain.vo.OrderVO;
-import pay.service.service.IOrderService;
+import trade.service.domain.vo.OrderVO;
+import trade.service.service.IOrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;

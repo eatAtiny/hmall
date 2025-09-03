@@ -1,7 +1,7 @@
-package pay.service.service;
+package trade.service.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import pay.service.domain.po.OrderLogistics;
+import trade.service.domain.po.OrderLogistics;
 
 /**
  * <p>

@@ -7,6 +7,7 @@ import cart.service.domain.dto.CartFormDTO;
 import cart.service.domain.po.Cart;
 import cart.service.domain.vo.CartVO;
 import cart.service.service.ICartService;
+import com.hmall.common.utils.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -47,6 +48,7 @@ public class CartController {
     @ApiOperation("查询购物车列表")
     @GetMapping
     public List<CartVO> queryMyCarts(){
+        System.out.println(UserContext.getUser());
         return cartService.queryMyCarts();
     }
     @ApiOperation("批量删除购物车中商品")

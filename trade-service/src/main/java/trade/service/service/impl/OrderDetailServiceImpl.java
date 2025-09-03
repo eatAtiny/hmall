@@ -1,9 +1,9 @@
-package pay.service.service.impl;
+package trade.service.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import pay.service.domain.po.OrderDetail;
-import pay.service.mapper.OrderDetailMapper;
-import pay.service.service.IOrderDetailService;
+import trade.service.domain.po.OrderDetail;
+import trade.service.mapper.OrderDetailMapper;
+import trade.service.service.IOrderDetailService;
 import org.springframework.stereotype.Service;
 
 /**

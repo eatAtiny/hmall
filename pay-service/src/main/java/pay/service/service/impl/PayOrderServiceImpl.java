@@ -123,7 +123,7 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> i
         // 2.初始化数据
         payOrder.setPayOverTime(LocalDateTime.now().plusMinutes(120L));
         payOrder.setStatus(PayStatus.WAIT_BUYER_PAY.getValue());
-        payOrder.setBizUserId(/* TODO UserContext.getUser()*/1L);
+        payOrder.setBizUserId(UserContext.getUser());
         return payOrder;
     }
     public PayOrder queryByBizOrderNo(Long bizOrderNo) {
