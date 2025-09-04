@@ -1,6 +1,7 @@
 package item.service.controller;
 
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hmall.common.domain.PageDTO;
 import com.hmall.common.domain.PageQuery;
@@ -37,6 +38,8 @@ public class ItemController {
     @ApiOperation("根据id批量查询商品")
     @GetMapping
     public List<ItemDTO> queryItemByIds(@RequestParam("ids") List<Long> ids){
+        // 手动制造查询延迟，测试服务线程隔离
+        ThreadUtil.sleep(500);
         return itemService.queryItemByIds(ids);
     }
 
