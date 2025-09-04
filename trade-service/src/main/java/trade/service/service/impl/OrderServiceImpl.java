@@ -3,6 +3,7 @@ package trade.service.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hmall.common.exception.BadRequestException;
 import com.hmall.common.utils.UserContext;
+import io.seata.spring.annotation.GlobalTransactional;
 import trade.service.domain.po.Order;
 import trade.service.domain.po.OrderDetail;
 import trade.service.mapper.OrderMapper;
@@ -44,7 +45,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private final CartClient cartClient;
 
     @Override
-    @Transactional
+    @GlobalTransactional
     public Long createOrder(OrderFormDTO orderFormDTO) {
         // 1.订单数据
         Order order = new Order();
