@@ -9,6 +9,8 @@ import com.hmall.common.exception.BizIllegalException;
 import com.hmall.common.utils.BeanUtils;
 import com.hmall.common.utils.UserContext;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import pay.service.domain.dto.PayOrderFormDTO;
 import pay.service.domain.dto.PayApplyDTO;
 import pay.service.domain.po.PayOrder;
@@ -30,6 +32,7 @@ import java.time.LocalDateTime;
  * @author 虎哥
  * @since 2023-05-16
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> implements IPayOrderService {
@@ -37,6 +40,8 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> i
     private final UserClient userClient;
 
     private final TradeClient tradeClient;
+
+    private final RabbitTemplate rabbitTemplate;
 
     @Override
     public String applyPayOrder(PayApplyDTO applyDTO) {
@@ -68,7 +73,13 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> i
 //        order.setId(po.getBizOrderNo());
 //        order.setStatus(2);
 //        order.setPayTime(LocalDateTime.now());
-        tradeClient.markOrderPaySuccess(po.getBizOrderNo());
+//        tradeClient.markOrderPaySuccess(po.getBizOrderNo());
+        // 6.发送消息 从OpenFeign同步切换到RabbitMQ异步
+        try {
+            rabbitTemplate.convertAndSend("pay.topic", "pay.success", po.getBizOrderNo());
+        } catch (Exception e) {
+            log.error("支付成功的消息发送失败，支付单id：{}， 交易单id：{}", po.getId(), po.getBizOrderNo(), e);
+        }
     }
 
     public boolean markPayOrderSuccess(Long id, LocalDateTime successTime) {
