@@ -1,11 +1,17 @@
 package trade.service.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hmall.common.exception.BadRequestException;
 import com.hmall.common.utils.UserContext;
+import com.hmall.service.impl.OrderDetailServiceImpl;
 import io.seata.spring.annotation.GlobalTransactional;
+import org.bouncycastle.jcajce.provider.symmetric.util.BaseMac;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import trade.service.constants.MQConstants;
 import trade.service.domain.po.Order;
 import trade.service.domain.po.OrderDetail;
+import trade.service.mapper.OrderDetailMapper;
 import trade.service.mapper.OrderMapper;
 
 import com.heima.api.client.ItemClient;
@@ -43,6 +49,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private final ItemClient itemClient;
     private final IOrderDetailService detailService;
     private final CartClient cartClient;
+    private final RabbitTemplate rabbitTemplate;
+    private final OrderDetailMapper orderDetailMapper;
 
     @Override
     @GlobalTransactional
@@ -86,6 +94,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         } catch (Exception e) {
             throw new RuntimeException("库存不足！");
         }
+
+        // 5.发送延迟消息，检测订单是否支付
+        rabbitTemplate.convertAndSend(MQConstants.DELAY_EXCHANGE_NAME, MQConstants.DELAY_ORDER_KEY, order.getId(),
+                message -> {
+                    message.getMessageProperties().setDelay(1000 * 10);
+                    return message;
+                });
+//        rabbitTemplate.convertAndSend("test.direct", "test.queue", order.getId());
         return order.getId();
     }
 
@@ -96,6 +112,31 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setStatus(2);
         order.setPayTime(LocalDateTime.now());
         updateById(order);
+    }
+
+    @Override
+    public void cancelOrderPaySuccess(Long orderId) {
+        // 1.标记订单状态为已取消
+        Order order = baseMapper.selectById(orderId);
+        if(order == null) {
+            throw new BadRequestException("订单不存在");
+        }
+        order.setStatus(5);
+        baseMapper.updateById(order);
+        // 2.增加商品库存
+        // 2.1.查询订单详情
+        List<OrderDetail> orderDetails = orderDetailMapper.selectList(new LambdaQueryWrapper<OrderDetail>().eq(OrderDetail::getOrderId, orderId));
+        // 2.2.获取商品id和数量的Map
+        Map<Long, Integer> itemNumMap = orderDetails.stream()
+                .collect(Collectors.toMap(OrderDetail::getItemId, OrderDetail::getNum));
+        Set<Long> itemIds = itemNumMap.keySet();
+        // 2.3.增加商品库存
+        List<OrderDetailDTO> detailDTOS = orderDetails.stream()
+                .map(orderDetail -> new OrderDetailDTO()
+                        .setItemId(orderDetail.getItemId())
+                        .setNum(-orderDetail.getNum()))
+                .collect(Collectors.toList());
+        itemClient.deductStock(detailDTOS);
     }
 
     private List<OrderDetail> buildDetails(Long orderId, List<ItemDTO> items, Map<Long, Integer> numMap) {

@@ -1,10 +1,12 @@
 package pay.service.controller;
 
+import com.heima.api.dto.PayOrderDTO;
 import com.hmall.common.exception.BizIllegalException;
 import com.hmall.common.utils.BeanUtils;
 import pay.service.domain.dto.PayApplyDTO;
 import pay.service.domain.dto.PayOrderFormDTO;
 import com.hmall.enums.PayType;
+import pay.service.domain.po.PayOrder;
 import pay.service.domain.vo.PayOrderVO;
 import pay.service.service.IPayOrderService;
 import io.swagger.annotations.Api;
@@ -45,5 +47,12 @@ public class PayController {
     public void tryPayOrderByBalance(@PathVariable("id") Long id, @RequestBody PayOrderFormDTO payOrderFormDTO){
         payOrderFormDTO.setId(id);
         payOrderService.tryPayOrderByBalance(payOrderFormDTO);
+    }
+
+    @ApiOperation("根据id查询支付单")
+    @GetMapping("/biz/{id}")
+    public PayOrderDTO queryPayOrderByBizOrderNo(@PathVariable("id") Long id){
+        PayOrder payOrder = payOrderService.lambdaQuery().eq(PayOrder::getBizOrderNo, id).one();
+        return BeanUtils.copyBean(payOrder, PayOrderDTO.class);
     }
 }
